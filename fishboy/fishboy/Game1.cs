@@ -19,6 +19,17 @@ namespace fishboy
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Texture2D fishTexture;
+        List<Fish> fishes;
+        Random rand = new Random();
+
+        SpriteFont scoreFont;
+        SpriteFont lifeFont;
+        SpriteFont levelFont;
+        int lifes = 4;
+        int score;
+        int level = 1;
+        bool gameOver = false;
 
         public Game1()
         {
@@ -55,6 +66,8 @@ namespace fishboy
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            fishTexture = Content.Load<Texture2D>("fish");
+            fishes = new List<Fish>();
         }
 
         /// <summary>
@@ -64,6 +77,7 @@ namespace fishboy
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+            fishes.Clear();
         }
 
         /// <summary>
@@ -78,6 +92,27 @@ namespace fishboy
                 this.Exit();
 
             // TODO: Add your update logic here
+            if (lifes == 0)
+                gameOver = true;
+
+
+            //peixes
+
+            //cria peixes
+            if (rand.NextDouble() > 0.99)
+            {
+                Vector2 pos = new Vector2(
+                        rand.Next(GraphicsDevice.Viewport.Height), 
+                        GraphicsDevice.Viewport.Width/2 + 10
+                );
+                fishes.Add(new Fish(pos, fishTexture));
+              
+            }
+
+            foreach (Fish fish in fishes)
+            {
+                fish.update(gameTime);
+            }
 
             base.Update(gameTime);
         }
@@ -91,6 +126,13 @@ namespace fishboy
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            //if (gameOver)
+            spriteBatch.Begin();
+            foreach(Fish fish in fishes){
+                fish.draw(spriteBatch);
+            }
+            spriteBatch.End();
+
 
             base.Draw(gameTime);
         }
