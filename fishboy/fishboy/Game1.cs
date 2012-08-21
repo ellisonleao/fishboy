@@ -9,6 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using Microsoft.Xna.Framework.Media;
+using System.Diagnostics;
+
+
 
 namespace fishboy
 {
@@ -20,6 +23,8 @@ namespace fishboy
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D fishTexture;
+        Texture2D bubbleTexture;
+        Texture2D backgroundTexture;
         List<Fish> fishes;
         Random rand = new Random();
 
@@ -67,6 +72,8 @@ namespace fishboy
 
             // TODO: use this.Content to load your game content here
             fishTexture = Content.Load<Texture2D>("fish");
+            bubbleTexture = Content.Load<Texture2D>("bubble");
+            backgroundTexture = Content.Load<Texture2D>("bg");
             fishes = new List<Fish>();
         }
 
@@ -95,24 +102,21 @@ namespace fishboy
             if (lifes == 0)
                 gameOver = true;
 
-
-            //peixes
-
             //cria peixes
-            if (rand.NextDouble() > 0.99)
+            if (rand.NextDouble() > 0.99/level)
             {
                 Vector2 pos = new Vector2(
-                        rand.Next(GraphicsDevice.Viewport.Height), 
-                        GraphicsDevice.Viewport.Width/2 + 10
+                        rand.Next(GraphicsDevice.Viewport.Width), 
+                        GraphicsDevice.Viewport.Height
                 );
                 fishes.Add(new Fish(pos, fishTexture));
-              
             }
 
             foreach (Fish fish in fishes)
             {
                 fish.update(gameTime);
             }
+
 
             base.Update(gameTime);
         }
@@ -128,9 +132,23 @@ namespace fishboy
             // TODO: Add your drawing code here
             //if (gameOver)
             spriteBatch.Begin();
+            //bg
+            spriteBatch.Draw(backgroundTexture, new Rectangle(0,0,GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height), Color.White);
+            //peixes
             foreach(Fish fish in fishes){
                 fish.draw(spriteBatch);
+ 
             }
+
+            //bolhas
+            if (rand.NextDouble() > 0.5)
+            {
+                spriteBatch.Draw(bubbleTexture, new Rectangle(
+                 rand.Next(0, GraphicsDevice.Viewport.Width),
+                 rand.Next(GraphicsDevice.Viewport.Height - 120, GraphicsDevice.Viewport.Height), 20, 20),
+                 Color.White);
+            }
+
             spriteBatch.End();
 
 
