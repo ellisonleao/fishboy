@@ -26,6 +26,7 @@ namespace fishboy
         Texture2D boyTexture;
         Texture2D bubbleTexture;
         Texture2D backgroundTexture;
+        Texture2D heartTexture;
         List<Fish> fishes;
         Random rand = new Random();
 
@@ -79,6 +80,8 @@ namespace fishboy
             backgroundTexture = Content.Load<Texture2D>("bg");
             scoreFont = Content.Load<SpriteFont>("score");
             boyTexture = Content.Load<Texture2D>("fishboy");
+            heartTexture = Content.Load<Texture2D>("heart");
+
             fishes = new List<Fish>();
             boy = new Boy(new Vector2(GraphicsDevice.Viewport.Width/2,100));
             
@@ -146,6 +149,15 @@ namespace fishboy
             //bg
             spriteBatch.Draw(backgroundTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
 
+            //hearts
+            var lifePos = new Vector2(GraphicsDevice.Viewport.Width / 2 - 50, heartTexture.Width + 10);
+            for (int i = 0; i < lifes; i++ )
+            {
+                spriteBatch.Draw(heartTexture, lifePos, Color.White);
+                lifePos.X += heartTexture.Width;
+            }
+
+
             //score
             spriteBatch.DrawString(scoreFont, "SCORE", new Vector2(30, GraphicsDevice.Viewport.Height - 60), Color.White);
             spriteBatch.DrawString(scoreFont, score.ToString() , new Vector2(150, GraphicsDevice.Viewport.Height - 60), Color.Red);
@@ -155,8 +167,13 @@ namespace fishboy
 
             //peixes
             foreach(Fish fish in fishes){
-                fish.draw(spriteBatch);
+                if (!fish.isDead)
+                {
+                    fish.draw(spriteBatch);
+                }
+                    
             }
+
             //bolhas
             if (rand.NextDouble() > 0.5)
             {

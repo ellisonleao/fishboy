@@ -37,7 +37,7 @@ namespace fishboy
                     }
 
 
-                    if (tl.Position.X >  480)
+                    if (tl.Position.X >  650)
                     {
                         if (this.position.X > 720) this.position = new Vector2(720, this.position.Y);
                         //direita
@@ -52,7 +52,7 @@ namespace fishboy
         public void draw(SpriteBatch sbatch, Texture2D texture) 
         {
             
-            //sbatch.Draw(texture, this.position, null, Color.White, 0, this.position, 0, SpriteEffects.None,0);
+            //sbatch.Draw(texture, this.position, null, Color.White, 0, Vector2.Zero, 0, SpriteEffects.None,0);
 
             sbatch.Draw(texture, this.position, Color.White);
         }
