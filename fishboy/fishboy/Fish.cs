@@ -20,11 +20,11 @@ namespace fishboy
             this.texture = text;
         }
 
-        public Vector2 update(GameTime gametime)
+        public Vector2 update(GameTime gametime,float vel)
         {
-            int direction = directions[rand.Next(0,directions.Length)] ;
-            float velX = direction * 0.9f *(float)gametime.ElapsedGameTime.TotalMilliseconds;
-            float velY = 0.15f * (float)gametime.ElapsedGameTime.TotalMilliseconds;
+        
+            float velX = 0.9f *(float)gametime.ElapsedGameTime.TotalMilliseconds;
+            float velY = vel * (float)gametime.ElapsedGameTime.TotalMilliseconds;
             this.position = new Vector2(
                     this.position.X , 
                     this.position.Y - velY
@@ -34,6 +34,12 @@ namespace fishboy
 
         public void draw(SpriteBatch sbatch) 
         {
+            /*
+            float rotation = MathHelper.ToRadians(180);
+            sbatch.Draw(this.texture, this.position, 
+                new Rectangle((int)this.position.X,(int)this.position.Y,this.texture.Width,this.texture.Height),
+                Color.White, rotation, Vector2.Zero, 0, SpriteEffects.None, 0f);
+            */
             sbatch.Draw(this.texture, this.position, Color.White);
         }
 

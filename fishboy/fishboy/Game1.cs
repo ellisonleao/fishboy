@@ -23,6 +23,7 @@ namespace fishboy
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D fishTexture;
+        Texture2D boyTexture;
         Texture2D bubbleTexture;
         Texture2D backgroundTexture;
         List<Fish> fishes;
@@ -35,6 +36,8 @@ namespace fishboy
         int score;
         int level = 1;
         bool gameOver = false;
+
+        Boy boy;
 
         public Game1()
         {
@@ -74,7 +77,11 @@ namespace fishboy
             fishTexture = Content.Load<Texture2D>("fish");
             bubbleTexture = Content.Load<Texture2D>("bubble");
             backgroundTexture = Content.Load<Texture2D>("bg");
+            scoreFont = Content.Load<SpriteFont>("score");
+            boyTexture = Content.Load<Texture2D>("fishboy");
             fishes = new List<Fish>();
+            boy = new Boy(new Vector2(GraphicsDevice.Viewport.Width/2,100));
+            
         }
 
         /// <summary>
@@ -102,11 +109,15 @@ namespace fishboy
             if (lifes == 0)
                 gameOver = true;
 
+            //boy
+            boy.update(gameTime);
+
+
             //cria peixes
             if (rand.NextDouble() > 0.99/level)
             {
                 Vector2 pos = new Vector2(
-                        rand.Next(GraphicsDevice.Viewport.Width), 
+                        rand.Next(GraphicsDevice.Viewport.Width - fishTexture.Width), 
                         GraphicsDevice.Viewport.Height
                 );
                 fishes.Add(new Fish(pos, fishTexture));
@@ -114,7 +125,7 @@ namespace fishboy
 
             foreach (Fish fish in fishes)
             {
-                fish.update(gameTime);
+                fish.update(gameTime, 0.10f * level);
             }
 
 
@@ -133,13 +144,19 @@ namespace fishboy
             //if (gameOver)
             spriteBatch.Begin();
             //bg
-            spriteBatch.Draw(backgroundTexture, new Rectangle(0,0,GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height), Color.White);
+            spriteBatch.Draw(backgroundTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+
+            //score
+            spriteBatch.DrawString(scoreFont, "SCORE", new Vector2(30, GraphicsDevice.Viewport.Height - 60), Color.White);
+            spriteBatch.DrawString(scoreFont, score.ToString() , new Vector2(150, GraphicsDevice.Viewport.Height - 60), Color.Red);
+            
+            //boy
+            boy.draw(spriteBatch, boyTexture);
+
             //peixes
             foreach(Fish fish in fishes){
                 fish.draw(spriteBatch);
- 
             }
-
             //bolhas
             if (rand.NextDouble() > 0.5)
             {
@@ -148,7 +165,6 @@ namespace fishboy
                  rand.Next(GraphicsDevice.Viewport.Height - 120, GraphicsDevice.Viewport.Height), 20, 20),
                  Color.White);
             }
-
             spriteBatch.End();
 
 
