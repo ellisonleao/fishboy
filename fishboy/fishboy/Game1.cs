@@ -38,6 +38,9 @@ namespace fishboy
         int level = 1;
         bool gameOver = false;
 
+        Song theme;
+        SoundEffect hit;
+
         Boy boy;
 
         public Game1()
@@ -81,9 +84,15 @@ namespace fishboy
             scoreFont = Content.Load<SpriteFont>("score");
             boyTexture = Content.Load<Texture2D>("fishboy");
             heartTexture = Content.Load<Texture2D>("heart");
+            theme = Content.Load<Song>("theme");
+            hit = Content.Load<SoundEffect>("hit");
 
             fishes = new List<Fish>();
             boy = new Boy(new Vector2(GraphicsDevice.Viewport.Width/2,100));
+
+            MediaPlayer.Play(theme);
+            // Coloca a música de fundo em loop infinito
+            MediaPlayer.IsRepeating = true;
             
         }
 
@@ -129,6 +138,16 @@ namespace fishboy
             foreach (Fish fish in fishes)
             {
                 fish.update(gameTime, 0.10f * level);
+                if (fish.hit(boy.position,hit))
+                {
+                   
+                  score += 10;
+                }
+
+                if (fish.isDead && gameTime.ElapsedGameTime.Seconds == 2)
+                {  
+                  lifes--;
+                }
             }
 
 
@@ -161,6 +180,10 @@ namespace fishboy
             //score
             spriteBatch.DrawString(scoreFont, "SCORE", new Vector2(30, GraphicsDevice.Viewport.Height - 60), Color.White);
             spriteBatch.DrawString(scoreFont, score.ToString() , new Vector2(150, GraphicsDevice.Viewport.Height - 60), Color.Red);
+
+            spriteBatch.DrawString(scoreFont, gameTime.ElapsedGameTime.Seconds.ToString(), 
+                new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height - 60), 
+                Color.Red);
             
             //boy
             boy.draw(spriteBatch, boyTexture);

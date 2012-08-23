@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 
 namespace fishboy
 {
@@ -13,8 +15,10 @@ namespace fishboy
         public float scale { get; set; }
         public Texture2D texture;
         public bool isDead;
+        public bool isCaptured;
         private Random rand = new Random();
         private int[] directions = {-1,1};
+
 
 
         public Fish(Vector2 pos,Texture2D text)
@@ -45,6 +49,18 @@ namespace fishboy
         public void draw(SpriteBatch sbatch) 
         {
             sbatch.Draw(this.texture, this.position, Color.White);
+            //sbatch.Draw(this.texture, this.position, null, Color.White, MathHelper.ToRadians(90.0f), Vector2.Zero, 0, SpriteEffects.None, 0);
+        }
+
+        public Boolean hit(Vector2 fishPos,SoundEffect hit)
+        {
+            if (this.position.Y == fishPos.Y) 
+            {
+                hit.Play();
+                return true;
+            }
+
+            return false;
         }
 
 
