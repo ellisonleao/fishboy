@@ -48,8 +48,8 @@ namespace fishboy
 
         public void draw(SpriteBatch sbatch) 
         {
-            sbatch.Draw(this.texture, this.position, Color.White);
-            //sbatch.Draw(this.texture, this.position, null, Color.White, MathHelper.ToRadians(90.0f), Vector2.Zero, 0, SpriteEffects.None, 0);
+            //sbatch.Draw(this.texture, this.position, Color.White);
+            sbatch.Draw(this.texture, this.position, null, Color.White, MathHelper.ToRadians(90.0f), Vector2.Zero, 1, SpriteEffects.None, 0);
         }
 
         public Boolean hit(Vector2 fishPos,SoundEffect hit)
