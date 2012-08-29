@@ -121,33 +121,38 @@ namespace fishboy
             if (lifes == 0)
                 gameOver = true;
 
+            //TODO: Formula para level
+            //level = ?
+
+
             //boy
             boy.update(gameTime);
-
+            var fishBoyRect = new Rectangle((int)boy.position.X, (int)boy.position.Y,
+                    boyTexture.Width, boyTexture.Height);
 
             //cria peixes
             if (rand.NextDouble() > 0.99/level)
             {
                 Vector2 pos = new Vector2(
-                        rand.Next(GraphicsDevice.Viewport.Width - fishTexture.Width), 
+                        GraphicsDevice.Viewport.Width/2, 
                         GraphicsDevice.Viewport.Height
                 );
                 fishes.Add(new Fish(pos, fishTexture));
             }
 
-            foreach (Fish fish in fishes)
+
+
+            for(int i=0 ; i < fishes.Count ; i++ )
             {
-                fish.update(gameTime, 0.10f * level);
-                if (fish.hit(boy.position,hit))
+                fishes[i].update(gameTime, 0.10f * level);
+                
+                if (fishes[i].hit(fishBoyRect,hit))
                 {
-                   
-                  score += 10;
+                    fishes.Remove(fishes[i]);
+                    score += 10;
+                  
                 }
 
-                if (fish.isDead && gameTime.ElapsedGameTime.Seconds == 2)
-                {  
-                  lifes--;
-                }
             }
 
 
@@ -181,6 +186,7 @@ namespace fishboy
             spriteBatch.DrawString(scoreFont, "SCORE", new Vector2(30, GraphicsDevice.Viewport.Height - 60), Color.White);
             spriteBatch.DrawString(scoreFont, score.ToString() , new Vector2(150, GraphicsDevice.Viewport.Height - 60), Color.Red);
 
+
             spriteBatch.DrawString(scoreFont, gameTime.ElapsedGameTime.Seconds.ToString(), 
                 new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height - 60), 
                 Color.Red);
@@ -190,11 +196,7 @@ namespace fishboy
 
             //peixes
             foreach(Fish fish in fishes){
-                if (!fish.isDead)
-                {
-                    fish.draw(spriteBatch);
-                }
-                    
+                fish.draw(spriteBatch);
             }
 
             //bolhas

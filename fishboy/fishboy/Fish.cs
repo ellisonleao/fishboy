@@ -14,8 +14,10 @@ namespace fishboy
         public Vector2 position { get; set; }
         public float scale { get; set; }
         public Texture2D texture;
-        public bool isDead;
-        public bool isCaptured;
+        public bool isOnTheBeach { get; set; }
+        public bool isCaptured { get; set; }
+        public bool isDead { get; set; }
+
         private Random rand = new Random();
         private int[] directions = {-1,1};
 
@@ -25,6 +27,8 @@ namespace fishboy
         {
             this.position = pos;
             this.texture = text;
+            this.isCaptured = false;
+            this.isOnTheBeach = false;
             this.isDead = false;
         }
 
@@ -32,11 +36,11 @@ namespace fishboy
         {
             float velX = 0.55f *(float)gametime.ElapsedGameTime.TotalMilliseconds;
             float velY = vel * (float)gametime.ElapsedGameTime.TotalMilliseconds;
+            
 
-
-            if (this.position.Y < 240)
+            if (this.position.Y < 210)
             {
-                var elapsed = gametime;
+                this.isOnTheBeach = true;
             }
             else
             {
@@ -46,18 +50,25 @@ namespace fishboy
                 );
             }
 
+         
+
         }
 
-        public void draw(SpriteBatch sbatch) 
+        public void draw(SpriteBatch sbatch)
         {
-            sbatch.Draw(this.texture, this.position, null, Color.White, MathHelper.ToRadians(90.0f), Vector2.Zero, 1, SpriteEffects.None, 0);
-        }
+            if (!this.isDead)
+            {
+                sbatch.Draw(this.texture, this.position, null, Color.White, MathHelper.ToRadians(90.0f), Vector2.Zero, 1, SpriteEffects.None, 0);
+            }
 
-        public Boolean hit(Vector2 fishPos,SoundEffect hit)
+        }
+        public Boolean hit(Rectangle playerRect,SoundEffect hit)
         {
-            if (this.position.Y == fishPos.Y) 
+            var bbox = new Rectangle((int)this.position.X,(int)this.position.Y,this.texture.Width,this.texture.Height);
+            if (playerRect.Intersects(bbox)) 
             {
                 hit.Play();
+                this.isDead = true;
                 return true;
             }
 
