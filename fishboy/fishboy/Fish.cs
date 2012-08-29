@@ -32,10 +32,11 @@ namespace fishboy
         {
             float velX = 0.55f *(float)gametime.ElapsedGameTime.TotalMilliseconds;
             float velY = vel * (float)gametime.ElapsedGameTime.TotalMilliseconds;
-            
+
+
             if (this.position.Y < 240)
             {
-                this.isDead = true;
+                var elapsed = gametime;
             }
             else
             {
@@ -44,11 +45,11 @@ namespace fishboy
                     this.position.Y - velY
                 );
             }
+
         }
 
         public void draw(SpriteBatch sbatch) 
         {
-            //sbatch.Draw(this.texture, this.position, Color.White);
             sbatch.Draw(this.texture, this.position, null, Color.White, MathHelper.ToRadians(90.0f), Vector2.Zero, 1, SpriteEffects.None, 0);
         }
 
