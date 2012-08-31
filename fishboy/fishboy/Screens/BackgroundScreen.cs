@@ -27,6 +27,15 @@ namespace fishboy
 
         ContentManager content;
         Texture2D backgroundTexture;
+        Texture2D cloud1Texture;
+        Texture2D cloud2Texture;
+        Texture2D logoTexture;
+        Texture2D bubbleTexture;
+
+        Vector2 cloud1Pos;
+        Vector2 cloud2Pos;
+
+        Random rand;
 
         #endregion
 
@@ -56,6 +65,16 @@ namespace fishboy
                 content = new ContentManager(ScreenManager.Game.Services, "Content");
 
             backgroundTexture = content.Load<Texture2D>("background");
+            cloud1Texture = content.Load<Texture2D>("cloud1");
+            cloud2Texture = content.Load<Texture2D>("cloud2");
+            logoTexture = content.Load<Texture2D>("logo");
+
+            bubbleTexture = content.Load<Texture2D>("bubblesky");
+
+            cloud1Pos = new Vector2(400, 100);
+            cloud2Pos = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width - 200, 100);
+
+            rand = new Random();
         }
 
 
@@ -83,11 +102,15 @@ namespace fishboy
         public override void Update(GameTime gameTime, bool otherScreenHasFocus,
                                                        bool coveredByOtherScreen)
         {
+            //atualiza posicao das nuvens
+            cloud1Pos.X -= 0.04f * gameTime.ElapsedGameTime.Milliseconds;
+            cloud2Pos.X -= 0.07f * gameTime.ElapsedGameTime.Milliseconds;
 
-
-            
-
-
+            if (cloud1Pos.X < 0)
+                cloud1Pos.X = ScreenManager.GraphicsDevice.Viewport.Width + cloud1Texture.Width;
+ 
+            if (cloud2Pos.X < 0)
+                cloud2Pos.X = ScreenManager.GraphicsDevice.Viewport.Width + cloud2Texture.Width + cloud1Texture.Width;
 
             base.Update(gameTime, otherScreenHasFocus, false);
         }
@@ -106,6 +129,23 @@ namespace fishboy
 
             spriteBatch.Draw(backgroundTexture, fullscreen,
                              new Color(TransitionAlpha, TransitionAlpha, TransitionAlpha));
+
+            spriteBatch.Draw(cloud1Texture, cloud1Pos, Color.White);
+            spriteBatch.Draw(cloud2Texture, cloud2Pos, Color.White);
+
+            //bolhas
+            if (rand.NextDouble() > 0.5)
+            {
+                spriteBatch.Draw(bubbleTexture,
+                    new Vector2(rand.Next(0, ScreenManager.GraphicsDevice.Viewport.Width), 
+                        rand.Next(0, 85)), Color.White);
+            }
+
+            spriteBatch.Draw(logoTexture, 
+                new Vector2(0,ScreenManager.GraphicsDevice.Viewport.Height/2 - 200), 
+                Color.White);
+
+
 
             spriteBatch.End();
         }

@@ -37,6 +37,13 @@ namespace fishboy
         Texture2D bubbleTexture;
         Texture2D backgroundTexture;
         Texture2D heartTexture;
+
+        Texture2D cloud1Texture;
+        Texture2D cloud2Texture;
+
+        Vector2 cloud1Pos;
+        Vector2 cloud2Pos;
+
         List<Fish> fishes;
         Random rand = new Random();
 
@@ -84,9 +91,13 @@ namespace fishboy
             heartTexture = content.Load<Texture2D>("heart");
             theme = content.Load<Song>("theme");
             hit = content.Load<SoundEffect>("hit");
+            cloud1Texture = content.Load<Texture2D>("cloud1");
+            cloud2Texture = content.Load<Texture2D>("cloud2");
 
             fishes = new List<Fish>();
             boy = new Boy(new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2, 100));
+            cloud1Pos = new Vector2(400, 100);
+            cloud2Pos = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width - 200, 100);
 
             MediaPlayer.Play(theme);
             // Coloca a música de fundo em loop infinito
@@ -127,6 +138,18 @@ namespace fishboy
             {
                 if (lifes == 0)
                     gameOver = true;
+
+                //nuvens
+                //atualiza posicao das nuvens
+                cloud1Pos.X -= 0.04f * gameTime.ElapsedGameTime.Milliseconds;
+                cloud2Pos.X -= 0.07f * gameTime.ElapsedGameTime.Milliseconds;
+
+                if (cloud1Pos.X < 0)
+                    cloud1Pos.X = ScreenManager.GraphicsDevice.Viewport.Width + cloud1Texture.Width;
+
+                if (cloud2Pos.X < 0)
+                    cloud2Pos.X = ScreenManager.GraphicsDevice.Viewport.Width + cloud2Texture.Width + cloud1Texture.Width;
+
 
                 //TODO: Formula para level
                 //level = ?
@@ -221,6 +244,9 @@ namespace fishboy
                 spriteBatch.Draw(heartTexture, lifePos, Color.White);
                 lifePos.X += heartTexture.Width;
             }
+
+            //clouds
+
 
 
             //score
