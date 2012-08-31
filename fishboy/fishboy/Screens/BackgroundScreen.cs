@@ -12,6 +12,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 #endregion
 
 namespace fishboy
@@ -36,6 +37,8 @@ namespace fishboy
         Vector2 cloud2Pos;
 
         Random rand;
+
+        Song music;
 
         #endregion
 
@@ -71,10 +74,16 @@ namespace fishboy
 
             bubbleTexture = content.Load<Texture2D>("bubblesky");
 
+            music = content.Load<Song>("menu");
+
             cloud1Pos = new Vector2(400, 100);
             cloud2Pos = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width - 200, 100);
 
             rand = new Random();
+
+            MediaPlayer.Stop();
+            MediaPlayer.Play(music);
+            MediaPlayer.IsRepeating = true;
         }
 
 

@@ -99,6 +99,7 @@ namespace fishboy
             cloud1Pos = new Vector2(400, 100);
             cloud2Pos = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width - 200, 100);
 
+            MediaPlayer.Stop();
             MediaPlayer.Play(theme);
             // Coloca a música de fundo em loop infinito
             MediaPlayer.IsRepeating = true;

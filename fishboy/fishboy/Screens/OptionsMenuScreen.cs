@@ -36,7 +36,7 @@ namespace fishboy
         /// Constructor.
         /// </summary>
         public OptionsMenuScreen()
-            : base("Options")
+            : base("")
         {
             // Create our menu entries.
             soundMenuEntry = new MenuEntry(string.Empty);

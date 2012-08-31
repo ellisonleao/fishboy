@@ -63,7 +63,7 @@ namespace fishboy
         /// </summary>
         void OptionsMenuEntrySelected(object sender, PlayerIndexEventArgs e)
         {
-            ScreenManager.AddScreen(new CreditsMenuScreen(), e.PlayerIndex);
+            ScreenManager.AddScreen(new OptionsMenuScreen(), e.PlayerIndex);
         }
 
 
