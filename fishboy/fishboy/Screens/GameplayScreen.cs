@@ -17,6 +17,8 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Devices.Sensors;
+using System.Windows.Threading;
 #endregion
 
 namespace fishboy
@@ -29,7 +31,6 @@ namespace fishboy
     class GameplayScreen : GameScreen
     {
         #region Fields
-
         ContentManager content;
         SpriteFont gameFont;
         Texture2D fishTexture;
@@ -37,9 +38,11 @@ namespace fishboy
         Texture2D bubbleTexture;
         Texture2D backgroundTexture;
         Texture2D heartTexture;
-
         Texture2D cloud1Texture;
         Texture2D cloud2Texture;
+
+        Accelerometer accel;
+        DispatcherTimer timer;
 
         Vector2 cloud1Pos;
         Vector2 cloud2Pos;
@@ -53,7 +56,7 @@ namespace fishboy
         int lifes = 4;
         int score;
         int level = 1;
-        bool gameOver = false;
+        bool hasAccel = false;
 
         Song theme;
         SoundEffect hit;
@@ -82,7 +85,13 @@ namespace fishboy
         {
             if (content == null)
                 content = new ContentManager(ScreenManager.Game.Services, "Content");
-            
+
+            if (Accelerometer.IsSupported)
+            {
+                accel = new Accelerometer();
+                hasAccel = true;
+            }
+
             fishTexture = content.Load<Texture2D>("fish");
             bubbleTexture = content.Load<Texture2D>("bubble");
             backgroundTexture = content.Load<Texture2D>("bg");
@@ -138,7 +147,8 @@ namespace fishboy
             if (IsActive)
             {
                 if (lifes == 0)
-                    gameOver = true;
+                    LoadingScreen.Load(ScreenManager, false, ControllingPlayer, new GameOverScreen());
+
 
                 //nuvens
                 //atualiza posicao das nuvens
@@ -164,29 +174,28 @@ namespace fishboy
                 if (rand.NextDouble() > 0.99 / level)
                 {
                     Vector2 pos = new Vector2(
-                            ScreenManager.GraphicsDevice.Viewport.Width / 2,
+                            rand.Next(0,ScreenManager.GraphicsDevice.Viewport.Width - fishTexture.Width),
                             ScreenManager.GraphicsDevice.Viewport.Height
                     );
                     fishes.Add(new Fish(pos, fishTexture));
                 }
 
 
-
                 for (int i = 0; i < fishes.Count; i++)
                 {
+                    
                     fishes[i].update(gameTime, 0.10f * level);
-
-                    if (fishes[i].hit(fishBoyRect, hit))
+                    if (fishes[i].isDead)
+                    {
+                        lifes--;
+                        fishes.Remove(fishes[i]);
+                    }else if (fishes[i].hit(fishBoyRect, hit))
                     {
                         fishes.Remove(fishes[i]);
                         score += 10;
-
                     }
 
                 }
-
-
-
 
             }
         }
@@ -247,7 +256,8 @@ namespace fishboy
             }
 
             //clouds
-
+            spriteBatch.Draw(cloud1Texture, cloud1Pos, Color.White);
+            spriteBatch.Draw(cloud2Texture, cloud2Pos, Color.White);
 
 
             //score

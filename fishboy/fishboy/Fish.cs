@@ -19,8 +19,8 @@ namespace fishboy
         public bool isDead { get; set; }
 
         private Random rand = new Random();
-        private int[] directions = {-1,1};
 
+        float timeToKill;
 
 
         public Fish(Vector2 pos,Texture2D text)
@@ -36,27 +36,39 @@ namespace fishboy
         {
             float velX = 0.55f *(float)gametime.ElapsedGameTime.TotalMilliseconds;
             float velY = vel * (float)gametime.ElapsedGameTime.TotalMilliseconds;
-            
+
+            if (this.isOnTheBeach)
+            {
+                if (this.timeToKill > 0)
+                    this.timeToKill -= (float)gametime.ElapsedGameTime.TotalSeconds;
+                else
+                    this.isDead = true;
+            }
+
 
             if (this.position.Y < 210)
             {
-                this.isOnTheBeach = true;
+                if (!this.isOnTheBeach)
+                {
+                    this.isOnTheBeach = true;
+                    this.timeToKill = 2.0f;
+                }
+                    
             }
             else
             {
                 this.position = new Vector2(
-                    this.position.X ,
+                    this.position.X,
                     this.position.Y - velY
                 );
             }
 
-         
 
         }
 
         public void draw(SpriteBatch sbatch)
         {
-            if (!this.isDead)
+            if (!this.isDead || !this.isCaptured)
             {
                 sbatch.Draw(this.texture, this.position, null, Color.White, MathHelper.ToRadians(90.0f), Vector2.Zero, 1, SpriteEffects.None, 0);
             }
@@ -68,7 +80,7 @@ namespace fishboy
             if (playerRect.Intersects(bbox)) 
             {
                 hit.Play();
-                this.isDead = true;
+                this.isCaptured = true;
                 return true;
             }
 

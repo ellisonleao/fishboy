@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using System.Collections.Generic;
+using Microsoft.Devices.Sensors;
 #endregion
 
 namespace fishboy
@@ -40,6 +41,7 @@ namespace fishboy
 
         public readonly List<GestureSample> Gestures = new List<GestureSample>();
 
+
         #endregion
 
         #region Initialization
@@ -57,6 +59,7 @@ namespace fishboy
             LastGamePadStates = new GamePadState[MaxInputs];
 
             GamePadWasConnected = new bool[MaxInputs];
+
         }
 
 
@@ -93,6 +96,7 @@ namespace fishboy
             {
                 Gestures.Add(TouchPanel.ReadGesture());
             }
+
         }
 
 
