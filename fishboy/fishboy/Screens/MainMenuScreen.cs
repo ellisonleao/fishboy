@@ -66,8 +66,6 @@ namespace fishboy
             ScreenManager.AddScreen(new OptionsMenuScreen(), e.PlayerIndex);
         }
 
-
-
         /// <summary>
         /// Event handler for when the Options menu entry is selected.
         /// </summary>

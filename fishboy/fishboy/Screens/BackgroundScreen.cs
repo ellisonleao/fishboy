@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
+using System.IO.IsolatedStorage;
 #endregion
 
 namespace fishboy
@@ -54,7 +55,7 @@ namespace fishboy
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
         }
 
-
+        
         /// <summary>
         /// Loads graphics content for this screen. The background texture is quite
         /// big, so we use our own local ContentManager to load it. This allows us
@@ -81,9 +82,15 @@ namespace fishboy
 
             rand = new Random();
 
-            MediaPlayer.Stop();
-            MediaPlayer.Play(music);
-            MediaPlayer.IsRepeating = true;
+            if ((bool)IsolatedStorageSettings.ApplicationSettings["sound"])
+            {
+                MediaPlayer.Play(music);
+                MediaPlayer.IsRepeating = true;
+            }
+            else
+            {
+                MediaPlayer.Stop();  
+            }
         }
 
 
@@ -111,15 +118,19 @@ namespace fishboy
         public override void Update(GameTime gameTime, bool otherScreenHasFocus,
                                                        bool coveredByOtherScreen)
         {
+            
             //atualiza posicao das nuvens
-            cloud1Pos.X -= 0.04f * gameTime.ElapsedGameTime.Milliseconds;
-            cloud2Pos.X -= 0.07f * gameTime.ElapsedGameTime.Milliseconds;
-
-            if (cloud1Pos.X < 0)
+            var vel1 = new Vector2(0.04f * (float)gameTime.ElapsedGameTime.TotalMilliseconds, 0.0f);
+            var vel2 = new Vector2(0.07f * (float)gameTime.ElapsedGameTime.TotalMilliseconds, 0.0f);
+            cloud1Pos -= vel1;
+            cloud2Pos -= vel2;
+            
+            if (cloud1Pos.X < -cloud1Texture.Width)
                 cloud1Pos.X = ScreenManager.GraphicsDevice.Viewport.Width + cloud1Texture.Width;
  
-            if (cloud2Pos.X < 0)
+            if (cloud2Pos.X < -cloud2Texture.Width)
                 cloud2Pos.X = ScreenManager.GraphicsDevice.Viewport.Width + cloud2Texture.Width + cloud1Texture.Width;
+
 
             base.Update(gameTime, otherScreenHasFocus, false);
         }
@@ -153,7 +164,6 @@ namespace fishboy
             spriteBatch.Draw(logoTexture, 
                 new Vector2(0,ScreenManager.GraphicsDevice.Viewport.Height/2 - 200), 
                 Color.White);
-
 
 
             spriteBatch.End();

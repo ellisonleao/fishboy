@@ -12,6 +12,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input.Touch;
 using System.IO;
+using System.IO.IsolatedStorage;
 #endregion
 
 namespace fishboy
@@ -27,7 +28,6 @@ namespace fishboy
         Hidden,
     }
 
-
     /// <summary>
     /// A screen is a single layer that has update and draw logic, and which
     /// can be combined with other layers to build up a complex menu system.
@@ -39,6 +39,7 @@ namespace fishboy
     {
         #region Properties
 
+        
 
         /// <summary>
         /// Normally when one screen is brought up over the top of another,
@@ -55,6 +56,7 @@ namespace fishboy
 
         bool isPopup = false;
 
+    
 
         /// <summary>
         /// Indicates how long the screen takes to

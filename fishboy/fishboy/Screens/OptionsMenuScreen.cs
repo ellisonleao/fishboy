@@ -9,6 +9,7 @@
 
 #region Using Statements
 using Microsoft.Xna.Framework;
+using System.IO.IsolatedStorage;
 #endregion
 
 namespace fishboy
@@ -23,9 +24,9 @@ namespace fishboy
         #region Fields
 
         MenuEntry soundMenuEntry;
-
-        static bool sound = true;
-
+        private bool sound = true;
+        
+        
 
         #endregion
 
@@ -40,8 +41,6 @@ namespace fishboy
         {
             // Create our menu entries.
             soundMenuEntry = new MenuEntry(string.Empty);
-
-
             SetMenuEntryText();
             // Hook up menu event handlers.
             soundMenuEntry.Selected += SoundMenuEntrySelected;
@@ -58,7 +57,16 @@ namespace fishboy
         /// </summary>
         void SetMenuEntryText()
         {
+            if (IsolatedStorageSettings.ApplicationSettings.Contains("sound"))
+            {
+                sound = (bool)IsolatedStorageSettings.ApplicationSettings["sound"];
+            }
+            else 
+            {
+                IsolatedStorageSettings.ApplicationSettings["sound"] = sound;
+            }
             soundMenuEntry.Text = "Sound: " + (sound ? "on" : "off");
+            IsolatedStorageSettings.ApplicationSettings.Save();
         }
 
 
@@ -72,8 +80,9 @@ namespace fishboy
         /// </summary>
         void SoundMenuEntrySelected(object sender, PlayerIndexEventArgs e)
         {
-            sound = !sound;
-
+            sound = !(bool)IsolatedStorageSettings.ApplicationSettings["sound"];
+            IsolatedStorageSettings.ApplicationSettings["sound"] = sound;
+            IsolatedStorageSettings.ApplicationSettings.Save();
             SetMenuEntryText();
         }
 

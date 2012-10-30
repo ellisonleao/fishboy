@@ -21,7 +21,7 @@ namespace fishboy
     class CreditsMenuScreen : MenuScreen
     {
         #region Fields
-        private string creditsText = "Texto dos creditos aqui";
+        private string creditsText = "Fuschia Games Studio";
         MenuEntry creditsMenuEntry;
         #endregion
 

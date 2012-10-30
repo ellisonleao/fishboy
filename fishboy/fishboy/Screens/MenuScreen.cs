@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input.Touch;
 using Microsoft.Xna.Framework.Input;
+using System.IO.IsolatedStorage;
 #endregion
 
 namespace fishboy
@@ -25,7 +26,6 @@ namespace fishboy
     abstract class MenuScreen : GameScreen
     {
         #region Fields
-
         // the number of pixels to pad above and below menu entries for touch input
         const int menuEntryPadding = 10;
 

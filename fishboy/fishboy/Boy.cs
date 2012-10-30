@@ -14,13 +14,15 @@ namespace fishboy
     {
         public Vector2 position { get; set; }
         private bool left, right;
+        int viewPort;
 
 
-        public Boy(Vector2 pos)
+        public Boy(Vector2 pos, int viewPort)
         {
             this.position = pos;
             this.left = false;
             this.right = false;
+            this.viewPort = viewPort;
         }
 
         public void update(GameTime gametime)
@@ -32,34 +34,29 @@ namespace fishboy
                 if ((tl.State == TouchLocationState.Pressed)
                         || (tl.State == TouchLocationState.Moved))
                 {
-                    float velX = 0.6f *(float)gametime.ElapsedGameTime.TotalMilliseconds;
-                    if (tl.Position.X < 90)
+                    var velX = new Vector2(0.6f *(float)gametime.ElapsedGameTime.TotalMilliseconds, 0.0f);
+                    if (tl.Position.X <= this.viewPort/2 )
                     {
                         if (this.position.X < 50) this.position = new Vector2(50, this.position.Y);
                         //esquerda
-                        left = true;
-                        right = false;
-                        this.position = new Vector2(this.position.X - velX, this.position.Y);
+                        this.left = true;
+                        this.right = false;
+                        this.position -= velX;
                     }
 
 
-                    if (tl.Position.X >  650)
+                    if (tl.Position.X > this.viewPort / 2)
                     {
                         if (this.position.X > 720) this.position = new Vector2(720, this.position.Y);
                         //direita
-                        left = false;
-                        right = true;
-                        this.position = new Vector2(this.position.X + velX, this.position.Y);
+                        this.left = false;
+                        this.right = true;
+                        this.position += velX;
                     }
                    
                 }
             }
             
-        }
-
-
-        public void updateAccel()
-        { 
         }
 
         public void draw(SpriteBatch sbatch, Texture2D texture) 

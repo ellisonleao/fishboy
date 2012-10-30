@@ -19,6 +19,7 @@ using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Devices.Sensors;
 using System.Windows.Threading;
+using System.IO.IsolatedStorage;
 #endregion
 
 namespace fishboy
@@ -32,7 +33,6 @@ namespace fishboy
     {
         #region Fields
         ContentManager content;
-        SpriteFont gameFont;
         Texture2D fishTexture;
         Texture2D boyTexture;
         Texture2D bubbleTexture;
@@ -40,9 +40,8 @@ namespace fishboy
         Texture2D heartTexture;
         Texture2D cloud1Texture;
         Texture2D cloud2Texture;
-
+        private float[] angles = { MathHelper.ToRadians(90), MathHelper.ToRadians(45), -MathHelper.ToRadians(45) };
         Accelerometer accel;
-        DispatcherTimer timer;
 
         Vector2 cloud1Pos;
         Vector2 cloud2Pos;
@@ -51,10 +50,11 @@ namespace fishboy
         Random rand = new Random();
 
         SpriteFont scoreFont;
-        SpriteFont lifeFont;
         SpriteFont levelFont;
+
         int lifes = 4;
         int score;
+        int hiscore;
         int level = 1;
         bool hasAccel = false;
 
@@ -96,6 +96,7 @@ namespace fishboy
             bubbleTexture = content.Load<Texture2D>("bubble");
             backgroundTexture = content.Load<Texture2D>("bg");
             scoreFont = content.Load<SpriteFont>("score");
+            levelFont = content.Load<SpriteFont>("level");
             boyTexture = content.Load<Texture2D>("fishboy");
             heartTexture = content.Load<Texture2D>("heart");
             theme = content.Load<Song>("theme");
@@ -104,14 +105,37 @@ namespace fishboy
             cloud2Texture = content.Load<Texture2D>("cloud2");
 
             fishes = new List<Fish>();
-            boy = new Boy(new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2, 100));
+            boy = new Boy(new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2, 100), ScreenManager.GraphicsDevice.Viewport.Width);
             cloud1Pos = new Vector2(400, 100);
             cloud2Pos = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width - 200, 100);
 
-            MediaPlayer.Stop();
-            MediaPlayer.Play(theme);
-            // Coloca a música de fundo em loop infinito
-            MediaPlayer.IsRepeating = true;
+
+            
+            if (IsolatedStorageSettings.ApplicationSettings.Contains("sound"))
+            {
+                var sound = IsolatedStorageSettings.ApplicationSettings["sound"];
+                if ((bool)sound)
+                {
+                    MediaPlayer.Play(theme);
+                    MediaPlayer.IsRepeating = true;
+                }
+                else
+                {
+                    MediaPlayer.Stop();
+                }
+
+            }
+
+
+
+            if (IsolatedStorageSettings.ApplicationSettings.Contains("hiscore"))
+            {
+                hiscore = (int)IsolatedStorageSettings.ApplicationSettings["hiscore"];
+            }
+            else 
+            {
+                hiscore = score;
+            }
             // once the load has finished, we use ResetElapsedTime to tell the game's
             // timing mechanism that we have just finished a very long frame, and that
             // it should not try to catch up.
@@ -146,24 +170,28 @@ namespace fishboy
 
             if (IsActive)
             {
-                if (lifes == 0)
+                if (lifes == 0) 
+                {
+                    //salva hiscore
+                    if (hiscore < score)
+                    {
+                        IsolatedStorageSettings.ApplicationSettings["hiscore"] = score;
+                        IsolatedStorageSettings.ApplicationSettings.Save();
+                    }
                     LoadingScreen.Load(ScreenManager, false, ControllingPlayer, new GameOverScreen());
-
-
+                }
+                    
                 //nuvens
-                //atualiza posicao das nuvens
-                cloud1Pos.X -= 0.04f * gameTime.ElapsedGameTime.Milliseconds;
-                cloud2Pos.X -= 0.07f * gameTime.ElapsedGameTime.Milliseconds;
+                var vel1 = new Vector2(0.04f * (float)gameTime.ElapsedGameTime.TotalMilliseconds, 0.0f);
+                var vel2 = new Vector2(0.07f * (float)gameTime.ElapsedGameTime.TotalMilliseconds, 0.0f);
+                cloud1Pos -= vel1;
+                cloud2Pos -= vel2;
 
-                if (cloud1Pos.X < 0)
+                if (cloud1Pos.X < -cloud1Texture.Width)
                     cloud1Pos.X = ScreenManager.GraphicsDevice.Viewport.Width + cloud1Texture.Width;
 
-                if (cloud2Pos.X < 0)
+                if (cloud2Pos.X < -cloud2Texture.Width)
                     cloud2Pos.X = ScreenManager.GraphicsDevice.Viewport.Width + cloud2Texture.Width + cloud1Texture.Width;
-
-
-                //TODO: Formula para level
-                //level = ?
 
                 //boy
                 boy.update(gameTime);
@@ -174,9 +202,10 @@ namespace fishboy
                 if (rand.NextDouble() > 0.99 / level)
                 {
                     Vector2 pos = new Vector2(
-                            rand.Next(0,ScreenManager.GraphicsDevice.Viewport.Width - fishTexture.Width),
+                            rand.Next(0,ScreenManager.GraphicsDevice.Viewport.Width + fishTexture.Width),
                             ScreenManager.GraphicsDevice.Viewport.Height
                     );
+                    var angle = angles[rand.Next(0, angles.Length)];
                     fishes.Add(new Fish(pos, fishTexture));
                 }
 
@@ -196,6 +225,7 @@ namespace fishboy
                     }
 
                 }
+
 
             }
         }
@@ -247,8 +277,11 @@ namespace fishboy
             spriteBatch.Draw(backgroundTexture, new Rectangle(0, 0, ScreenManager.GraphicsDevice.Viewport.Width, 
                 ScreenManager.GraphicsDevice.Viewport.Height), Color.White);
 
+            //hiscore
+            spriteBatch.DrawString(scoreFont,"HISCORE " + hiscore.ToString(), new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - 80, 20), Color.Red);
+
             //hearts
-            var lifePos = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - 50, heartTexture.Width + 10);
+            var lifePos = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - 50, heartTexture.Width + 30);
             for (int i = 0; i < lifes; i++)
             {
                 spriteBatch.Draw(heartTexture, lifePos, Color.White);
@@ -259,11 +292,14 @@ namespace fishboy
             spriteBatch.Draw(cloud1Texture, cloud1Pos, Color.White);
             spriteBatch.Draw(cloud2Texture, cloud2Pos, Color.White);
 
-
             //score
             spriteBatch.DrawString(scoreFont, "SCORE", new Vector2(30, ScreenManager.GraphicsDevice.Viewport.Height - 60), Color.White);
             spriteBatch.DrawString(scoreFont, score.ToString(), new Vector2(150, ScreenManager.GraphicsDevice.Viewport.Height - 60), Color.Red);
 
+
+            //level
+            spriteBatch.DrawString(levelFont, "LEVEL " + level.ToString(), new Vector2( ScreenManager.GraphicsDevice.Viewport.Width- 350, 
+                ScreenManager.GraphicsDevice.Viewport.Height - 60), Color.White);
 
             spriteBatch.DrawString(scoreFont, gameTime.ElapsedGameTime.Seconds.ToString(),
                 new Vector2(ScreenManager.GraphicsDevice.Viewport.Width, ScreenManager.GraphicsDevice.Viewport.Height - 60),
