@@ -80,7 +80,6 @@ namespace fishboy
             set { traceEnabled = value; }
         }
 
-
         #endregion
 
         #region Initialization

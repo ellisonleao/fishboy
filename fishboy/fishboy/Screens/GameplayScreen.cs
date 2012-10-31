@@ -32,6 +32,7 @@ namespace fishboy
     class GameplayScreen : GameScreen
     {
         #region Fields
+        const int TOTAL_FISHES = 100;
         ContentManager content;
         Texture2D fishTexture;
         Texture2D boyTexture;
@@ -40,23 +41,20 @@ namespace fishboy
         Texture2D heartTexture;
         Texture2D cloud1Texture;
         Texture2D cloud2Texture;
-        private float[] angles = { MathHelper.ToRadians(90), MathHelper.ToRadians(45), -MathHelper.ToRadians(45) };
-        Accelerometer accel;
-
         Vector2 cloud1Pos;
         Vector2 cloud2Pos;
-
         List<Fish> fishes;
+        List<Fish> toBeRemoved;
         Random rand = new Random();
 
         SpriteFont scoreFont;
         SpriteFont levelFont;
 
-        int lifes = 4;
+        int lifes;
         int score;
         int hiscore;
-        int level = 1;
-        bool hasAccel = false;
+        int level;
+        private float[] angles = { MathHelper.ToRadians(90), MathHelper.ToRadians(45), -MathHelper.ToRadians(45) };
 
         Song theme;
         SoundEffect hit;
@@ -75,6 +73,10 @@ namespace fishboy
         {
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
+
+            score = 0;
+            level = 1;
+            lifes = 4;
         }
 
 
@@ -85,12 +87,6 @@ namespace fishboy
         {
             if (content == null)
                 content = new ContentManager(ScreenManager.Game.Services, "Content");
-
-            if (Accelerometer.IsSupported)
-            {
-                accel = new Accelerometer();
-                hasAccel = true;
-            }
 
             fishTexture = content.Load<Texture2D>("fish");
             bubbleTexture = content.Load<Texture2D>("bubble");
@@ -105,6 +101,9 @@ namespace fishboy
             cloud2Texture = content.Load<Texture2D>("cloud2");
 
             fishes = new List<Fish>();
+            toBeRemoved = new List<Fish>();
+
+
             boy = new Boy(new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2, 100), ScreenManager.GraphicsDevice.Viewport.Width);
             cloud1Pos = new Vector2(400, 100);
             cloud2Pos = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width - 200, 100);
@@ -127,7 +126,6 @@ namespace fishboy
             }
 
 
-
             if (IsolatedStorageSettings.ApplicationSettings.Contains("hiscore"))
             {
                 hiscore = (int)IsolatedStorageSettings.ApplicationSettings["hiscore"];
@@ -136,6 +134,8 @@ namespace fishboy
             {
                 hiscore = score;
             }
+            CreateFishes();
+
             // once the load has finished, we use ResetElapsedTime to tell the game's
             // timing mechanism that we have just finished a very long frame, and that
             // it should not try to catch up.
@@ -156,6 +156,18 @@ namespace fishboy
         #endregion
 
         #region Update and Draw
+        public void CreateFishes()
+        {
+            //cria peixes
+            for (int i = 0; i <= TOTAL_FISHES; i++)
+            {
+                Vector2 pos = new Vector2(
+                    rand.Next(fishTexture.Width, ScreenManager.GraphicsDevice.Viewport.Width - fishTexture.Width),
+                    ScreenManager.GraphicsDevice.Viewport.Height);
+                fishes.Add(new Fish(pos, fishTexture));
+            }
+        }
+
 
 
         /// <summary>
@@ -170,6 +182,8 @@ namespace fishboy
 
             if (IsActive)
             {
+                level = score / 100 + 1;
+
                 if (lifes == 0) 
                 {
                     //salva hiscore
@@ -198,38 +212,34 @@ namespace fishboy
                 var fishBoyRect = new Rectangle((int)boy.position.X, (int)boy.position.Y,
                         boyTexture.Width, boyTexture.Height);
 
-                //cria peixes
-                if (rand.NextDouble() > 0.99 / level)
-                {
-                    Vector2 pos = new Vector2(
-                            rand.Next(0,ScreenManager.GraphicsDevice.Viewport.Width + fishTexture.Width),
-                            ScreenManager.GraphicsDevice.Viewport.Height
-                    );
-                    var angle = angles[rand.Next(0, angles.Length)];
-                    fishes.Add(new Fish(pos, fishTexture));
-                }
+                int fishQuantity = FibonacciFishes(level) / level;
 
-
-                for (int i = 0; i < fishes.Count; i++)
+                for (int i = 0; i < fishQuantity; i++)
                 {
-                    
-                    fishes[i].update(gameTime, 0.10f * level);
+                        
+                    fishes[i].update(gameTime, 0.10f);
                     if (fishes[i].isDead)
                     {
                         lifes--;
                         fishes.Remove(fishes[i]);
                     }else if (fishes[i].hit(fishBoyRect, hit))
                     {
-                        fishes.Remove(fishes[i]);
                         score += 10;
+                        fishes.Remove(fishes[i]);
                     }
-
                 }
-
 
             }
         }
 
+        /// <summary>
+        /// Determine the fish vel by level, using fibonnacci sequence
+        /// </summary>
+        public int FibonacciFishes(int level)
+        {
+            int[] sequence = new int[] { 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 };
+            return sequence[level - 1];
+        }
 
         /// <summary>
         /// Lets the game respond to player input. Unlike the Update method,
@@ -278,7 +288,7 @@ namespace fishboy
                 ScreenManager.GraphicsDevice.Viewport.Height), Color.White);
 
             //hiscore
-            spriteBatch.DrawString(scoreFont,"HISCORE " + hiscore.ToString(), new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - 80, 20), Color.Red);
+            spriteBatch.DrawString(scoreFont,"HISCORE " + hiscore.ToString(), new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - 90, 20), Color.Red);
 
             //hearts
             var lifePos = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - 50, heartTexture.Width + 30);

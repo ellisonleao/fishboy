@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
+using System.IO.IsolatedStorage;
 
 namespace fishboy
 {
@@ -34,12 +35,12 @@ namespace fishboy
             
         }
 
-        public void update(GameTime gametime,float vel)
+        public void update(GameTime gametime, float vel)
         {
-            float velX = 0.55f;
+            
             float velY = vel;
 
-            this.vel = new Vector2((float)velX, (float)velY);
+            this.vel = new Vector2(0, velY * (float)gametime.ElapsedGameTime.TotalMilliseconds);
 
             if (this.isOnTheBeach)
             {
@@ -61,7 +62,7 @@ namespace fishboy
             }
             else
             {
-                this.position += (float)gametime.ElapsedGameTime.TotalMilliseconds * this.vel;
+                this.position -=  this.vel;
             }
         }
 
@@ -73,12 +74,13 @@ namespace fishboy
             }
 
         }
-        public Boolean hit(Rectangle playerRect,SoundEffect hit)
+        public Boolean hit(Rectangle playerRect, SoundEffect hit)
         {
             var bbox = new Rectangle((int)this.position.X,(int)this.position.Y,this.texture.Width,this.texture.Height);
             if (playerRect.Intersects(bbox)) 
             {
-                hit.Play();
+                if ((bool) IsolatedStorageSettings.ApplicationSettings["sound"]) 
+                    hit.Play();
                 this.isCaptured = true;
                 return true;
             }

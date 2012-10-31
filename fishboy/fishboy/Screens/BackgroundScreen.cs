@@ -33,6 +33,7 @@ namespace fishboy
         Texture2D cloud2Texture;
         Texture2D logoTexture;
         Texture2D bubbleTexture;
+        Texture2D menuTexture;
 
         Vector2 cloud1Pos;
         Vector2 cloud2Pos;
@@ -72,6 +73,7 @@ namespace fishboy
             cloud1Texture = content.Load<Texture2D>("cloud1");
             cloud2Texture = content.Load<Texture2D>("cloud2");
             logoTexture = content.Load<Texture2D>("logo");
+            menuTexture = content.Load<Texture2D>("menu_texture");
 
             bubbleTexture = content.Load<Texture2D>("bubblesky");
 
@@ -82,14 +84,18 @@ namespace fishboy
 
             rand = new Random();
 
-            if ((bool)IsolatedStorageSettings.ApplicationSettings["sound"])
+            if (!IsolatedStorageSettings.ApplicationSettings.Contains("sound"))
+            {
+                IsolatedStorageSettings.ApplicationSettings["sound"] = true;
+            }
+            else if ((bool)IsolatedStorageSettings.ApplicationSettings["sound"])
             {
                 MediaPlayer.Play(music);
                 MediaPlayer.IsRepeating = true;
             }
-            else
+            else if (!(bool)IsolatedStorageSettings.ApplicationSettings["sound"])
             {
-                MediaPlayer.Stop();  
+                MediaPlayer.Stop();
             }
         }
 
@@ -161,9 +167,18 @@ namespace fishboy
                         rand.Next(0, 85)), Color.White);
             }
 
-            spriteBatch.Draw(logoTexture, 
-                new Vector2(0,ScreenManager.GraphicsDevice.Viewport.Height/2 - 200), 
+            //menu
+            spriteBatch.Draw(menuTexture,
+                new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - 140, 140),
                 Color.White);
+
+            //logo
+            spriteBatch.Draw(logoTexture, 
+                new Vector2(ScreenManager.GraphicsDevice.Viewport.Width/2 - 180, 10), 
+                Color.White);
+
+
+
 
 
             spriteBatch.End();
