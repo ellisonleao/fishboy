@@ -15,6 +15,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input.Touch;
 using Microsoft.Xna.Framework.Input;
 using System.IO.IsolatedStorage;
+using Microsoft.Xna.Framework.Content;
 #endregion
 
 namespace fishboy
@@ -26,13 +27,14 @@ namespace fishboy
     abstract class MenuScreen : GameScreen
     {
         #region Fields
+        ContentManager content;
         // the number of pixels to pad above and below menu entries for touch input
         const int menuEntryPadding = 10;
 
         List<MenuEntry> menuEntries = new List<MenuEntry>();
         int selectedEntry = 0;
         string menuTitle;
-
+        Texture2D menuTexture;
         #endregion
 
         #region Properties
@@ -224,7 +226,10 @@ namespace fishboy
             
 
             spriteBatch.Begin();
-           
+            //menu bg
+            spriteBatch.Draw(menuTexture,
+                new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - 140, 140),
+                Color.White);
 
             // Draw each menu entry in turn.
             for (int i = 0; i < menuEntries.Count; i++)
@@ -255,6 +260,34 @@ namespace fishboy
             spriteBatch.End();
         }
 
+
+        #endregion
+
+        #region Load and UnloadContent
+        /// <summary>
+        /// Loads graphics content for this screen. The background texture is quite
+        /// big, so we use our own local ContentManager to load it. This allows us
+        /// to unload before going from the menus into the game itself, wheras if we
+        /// used the shared ContentManager provided by the Game class, the content
+        /// would remain loaded forever.
+        /// </summary>
+        public override void LoadContent()
+        {
+            if (content == null)
+                content = new ContentManager(ScreenManager.Game.Services, "Content");
+
+
+            menuTexture = content.Load<Texture2D>("menu_texture");
+
+        }
+
+        /// <summary>
+        /// Unloads graphics content for this screen.
+        /// </summary>
+        public override void UnloadContent()
+        {
+            content.Unload();
+        }
 
         #endregion
     }

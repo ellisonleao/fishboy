@@ -30,15 +30,18 @@ namespace fishboy
             // Create our menu entries.
             MenuEntry playGameMenuEntry = new MenuEntry("Play Game");
             MenuEntry optionsMenuEntry = new MenuEntry("Options");
+            MenuEntry helpMenuEntry = new MenuEntry("Help");
             MenuEntry creditsMenuEntry = new MenuEntry("Credits");
 
             // Hook up menu event handlers.
             playGameMenuEntry.Selected += PlayGameMenuEntrySelected;
             optionsMenuEntry.Selected += OptionsMenuEntrySelected;
+            helpMenuEntry.Selected += HelpMenuEntrySelected;
             creditsMenuEntry.Selected += CreditsMenuEntrySelected;
             // Add entries to the menu.
             MenuEntries.Add(playGameMenuEntry);
             MenuEntries.Add(optionsMenuEntry);
+            MenuEntries.Add(helpMenuEntry);
             MenuEntries.Add(creditsMenuEntry);
         }
 
@@ -65,6 +68,17 @@ namespace fishboy
         {
             ScreenManager.AddScreen(new OptionsMenuScreen(), e.PlayerIndex);
         }
+
+
+        /// <summary>
+        /// Event handler for when the Play Game menu entry is selected.
+        /// </summary>
+        void HelpMenuEntrySelected(object sender, PlayerIndexEventArgs e)
+        {
+            LoadingScreen.Load(ScreenManager, true, e.PlayerIndex,
+                               new HelpScreen());
+        }
+
 
         /// <summary>
         /// Event handler for when the Options menu entry is selected.

@@ -88,6 +88,14 @@ namespace fishboy
             return false;
         }
 
+        public void reboot(int height, int width) 
+        { 
+            int newX = rand.Next(this.texture.Width, width - this.texture.Width);
+            this.position = new Vector2((float) newX, (float) height);
+            this.isDead = false;
+            this.isOnTheBeach = false;
+        }
+
 
     }
 }

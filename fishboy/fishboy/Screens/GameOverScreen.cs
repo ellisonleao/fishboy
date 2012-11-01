@@ -143,7 +143,7 @@ namespace fishboy
 
 
             spriteBatch.Draw(logoTexture,
-                new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - 100, ScreenManager.GraphicsDevice.Viewport.Height / 2 - 150), 
+                new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - 150, ScreenManager.GraphicsDevice.Viewport.Height / 2 - 150), 
                 Color.White);
 
             spriteBatch.End();

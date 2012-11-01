@@ -54,6 +54,8 @@ namespace fishboy
         int score;
         int hiscore;
         int level;
+        int fishQuantity;
+        float fishVel;
         private float[] angles = { MathHelper.ToRadians(90), MathHelper.ToRadians(45), -MathHelper.ToRadians(45) };
 
         Song theme;
@@ -77,6 +79,7 @@ namespace fishboy
             score = 0;
             level = 1;
             lifes = 4;
+            fishVel = 0.10f;
         }
 
 
@@ -212,20 +215,25 @@ namespace fishboy
                 var fishBoyRect = new Rectangle((int)boy.position.X, (int)boy.position.Y,
                         boyTexture.Width, boyTexture.Height);
 
-                int fishQuantity = FibonacciFishes(level) / level;
 
+              
+                fishQuantity = FibonacciFishes(level);
+                if (level > 7)
+                { 
+                    fishVel = 0.10f *  ( level / (level + 1) );
+                }
                 for (int i = 0; i < fishQuantity; i++)
                 {
                         
-                    fishes[i].update(gameTime, 0.10f);
+                    fishes[i].update(gameTime, fishVel);
                     if (fishes[i].isDead)
                     {
                         lifes--;
-                        fishes.Remove(fishes[i]);
+                        fishes[i].reboot(ScreenManager.GraphicsDevice.Viewport.Height, ScreenManager.GraphicsDevice.Viewport.Width);
                     }else if (fishes[i].hit(fishBoyRect, hit))
                     {
                         score += 10;
-                        fishes.Remove(fishes[i]);
+                        fishes[i].reboot(ScreenManager.GraphicsDevice.Viewport.Height, ScreenManager.GraphicsDevice.Viewport.Width);
                     }
                 }
 
@@ -237,8 +245,9 @@ namespace fishboy
         /// </summary>
         public int FibonacciFishes(int level)
         {
-            int[] sequence = new int[] { 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 };
-            return sequence[level - 1];
+            int[] sequence = new int[] { 1, 1, 2, 3, 5, 8, 13 };
+            int key = level  % 7;
+            return sequence[key];
         }
 
         /// <summary>
@@ -289,6 +298,11 @@ namespace fishboy
 
             //hiscore
             spriteBatch.DrawString(scoreFont,"HISCORE " + hiscore.ToString(), new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - 90, 20), Color.Red);
+            
+
+            //DEBUG
+            spriteBatch.DrawString(scoreFont, fishQuantity.ToString(), new Vector2(20, 20), Color.Red);
+
 
             //hearts
             var lifePos = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - 50, heartTexture.Width + 30);
