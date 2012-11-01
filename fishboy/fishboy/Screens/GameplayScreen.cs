@@ -60,6 +60,7 @@ namespace fishboy
 
         Song theme;
         SoundEffect hit;
+        SoundEffect dead;
 
         Boy boy;
 
@@ -77,7 +78,6 @@ namespace fishboy
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
             score = 0;
-            level = 1;
             lifes = 4;
             fishVel = 0.10f;
         }
@@ -100,6 +100,7 @@ namespace fishboy
             heartTexture = content.Load<Texture2D>("heart");
             theme = content.Load<Song>("theme");
             hit = content.Load<SoundEffect>("hit");
+            dead = content.Load<SoundEffect>("dead");
             cloud1Texture = content.Load<Texture2D>("cloud1");
             cloud2Texture = content.Load<Texture2D>("cloud2");
 
@@ -107,7 +108,8 @@ namespace fishboy
             toBeRemoved = new List<Fish>();
 
 
-            boy = new Boy(new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2, 100), ScreenManager.GraphicsDevice.Viewport.Width);
+            boy = new Boy(new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2, 100), 
+                          ScreenManager.GraphicsDevice.Viewport.Width, boyTexture);
             cloud1Pos = new Vector2(400, 100);
             cloud2Pos = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width - 200, 100);
 
@@ -186,8 +188,8 @@ namespace fishboy
             if (IsActive)
             {
                 level = score / 100 + 1;
-
-                if (lifes == 0) 
+               
+                if (lifes <= 0) 
                 {
                     //salva hiscore
                     if (hiscore < score)
@@ -212,25 +214,25 @@ namespace fishboy
 
                 //boy
                 boy.update(gameTime);
-                var fishBoyRect = new Rectangle((int)boy.position.X, (int)boy.position.Y,
-                        boyTexture.Width, boyTexture.Height);
 
-
-              
-                fishQuantity = FibonacciFishes(level);
-                if (level > 7)
-                { 
-                    fishVel = 0.10f *  ( level / (level + 1) );
+                if (level > 6)
+                {
+                    fishVel = 0.10f * (level / (level + 1));
+                    fishQuantity = FibonacciFishes(6);
+                }
+                else
+                {
+                    fishQuantity = FibonacciFishes(level);
                 }
                 for (int i = 0; i < fishQuantity; i++)
                 {
                         
-                    fishes[i].update(gameTime, fishVel);
+                    fishes[i].update(gameTime, fishVel, dead);
                     if (fishes[i].isDead)
                     {
                         lifes--;
                         fishes[i].reboot(ScreenManager.GraphicsDevice.Viewport.Height, ScreenManager.GraphicsDevice.Viewport.Width);
-                    }else if (fishes[i].hit(fishBoyRect, hit))
+                    }else if (fishes[i].hit(boy.getBounds(), hit))
                     {
                         score += 10;
                         fishes[i].reboot(ScreenManager.GraphicsDevice.Viewport.Height, ScreenManager.GraphicsDevice.Viewport.Width);
@@ -245,8 +247,8 @@ namespace fishboy
         /// </summary>
         public int FibonacciFishes(int level)
         {
-            int[] sequence = new int[] { 1, 1, 2, 3, 5, 8, 13 };
-            int key = level  % 7;
+            int[] sequence = new int[] { 1, 1, 2, 3, 5, 8 };
+            int key = level - 1;
             return sequence[key];
         }
 
@@ -330,7 +332,7 @@ namespace fishboy
                 Color.Red);
 
             //boy
-            boy.draw(spriteBatch, boyTexture);
+            boy.draw(spriteBatch);
 
             //peixes
             foreach (Fish fish in fishes)

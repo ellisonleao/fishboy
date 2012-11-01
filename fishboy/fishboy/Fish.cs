@@ -35,7 +35,7 @@ namespace fishboy
             
         }
 
-        public void update(GameTime gametime, float vel)
+        public void update(GameTime gametime, float vel, SoundEffect dead)
         {
             
             float velY = vel;
@@ -47,7 +47,12 @@ namespace fishboy
                 if (this.timeToKill > 0)
                     this.timeToKill -= (float)gametime.ElapsedGameTime.TotalSeconds;
                 else
+                {
+                    if ((bool)IsolatedStorageSettings.ApplicationSettings["sound"])
+                        dead.Play();
                     this.isDead = true;
+                }
+                    
             }
 
 
@@ -76,7 +81,7 @@ namespace fishboy
         }
         public Boolean hit(Rectangle playerRect, SoundEffect hit)
         {
-            var bbox = new Rectangle((int)this.position.X,(int)this.position.Y,this.texture.Width,this.texture.Height);
+            var bbox = new Rectangle((int)this.position.X, (int)this.position.Y, this.texture.Height, this.texture.Width); //peixe rotacionado
             if (playerRect.Intersects(bbox)) 
             {
                 if ((bool) IsolatedStorageSettings.ApplicationSettings["sound"]) 
