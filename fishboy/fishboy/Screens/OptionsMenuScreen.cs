@@ -24,8 +24,9 @@ namespace fishboy
         #region Fields
 
         MenuEntry soundMenuEntry;
+        MenuEntry soundFxMenuEntry;
         private bool sound = true;
-        
+        private bool soundFx = true;
         
 
         #endregion
@@ -41,13 +42,16 @@ namespace fishboy
         {
             // Create our menu entries.
             soundMenuEntry = new MenuEntry(string.Empty);
+            soundFxMenuEntry = new MenuEntry(string.Empty);
             SetMenuEntryText();
             // Hook up menu event handlers.
             soundMenuEntry.Selected += SoundMenuEntrySelected;
+            soundFxMenuEntry.Selected += SoundFxMenuEntrySelected;
 
             
             // Add entries to the menu.
             MenuEntries.Add(soundMenuEntry);
+            MenuEntries.Add(soundFxMenuEntry);
 
         }
 
@@ -57,6 +61,7 @@ namespace fishboy
         /// </summary>
         void SetMenuEntryText()
         {
+            //music
             if (IsolatedStorageSettings.ApplicationSettings.Contains("sound"))
             {
                 sound = (bool)IsolatedStorageSettings.ApplicationSettings["sound"];
@@ -66,6 +71,18 @@ namespace fishboy
                 IsolatedStorageSettings.ApplicationSettings["sound"] = sound;
             }
             soundMenuEntry.Text = "Sound: " + (sound ? "on" : "off");
+
+
+            //effects
+            if (IsolatedStorageSettings.ApplicationSettings.Contains("soundFx"))
+            {
+                soundFx = (bool)IsolatedStorageSettings.ApplicationSettings["soundFx"];
+            }
+            else
+            {
+                IsolatedStorageSettings.ApplicationSettings["soundFx"] = sound;
+            }
+            soundFxMenuEntry.Text = "Effects: " + (soundFx ? "on" : "off");
             IsolatedStorageSettings.ApplicationSettings.Save();
         }
 
@@ -86,6 +103,17 @@ namespace fishboy
             SetMenuEntryText();
         }
 
+
+        /// <summary>
+        /// Event handler for when the Frobnicate menu entry is selected.
+        /// </summary>
+        void SoundFxMenuEntrySelected(object sender, PlayerIndexEventArgs e)
+        {
+            soundFx = !(bool)IsolatedStorageSettings.ApplicationSettings["soundFx"];
+            IsolatedStorageSettings.ApplicationSettings["soundFx"] = soundFx;
+            IsolatedStorageSettings.ApplicationSettings.Save();
+            SetMenuEntryText();
+        }
 
         #endregion
     }

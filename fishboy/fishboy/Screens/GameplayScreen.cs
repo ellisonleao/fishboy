@@ -77,7 +77,7 @@ namespace fishboy
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
-            score = 0;
+            score = 0;// 600;
             lifes = 4;
             fishVel = 0.10f;
         }
@@ -164,7 +164,7 @@ namespace fishboy
         public void CreateFishes()
         {
             //cria peixes
-            for (int i = 0; i <= TOTAL_FISHES; i++)
+            for (int i = 0; i <= TOTAL_FISHES; ++i)
             {
                 Vector2 pos = new Vector2(
                     rand.Next(fishTexture.Width, ScreenManager.GraphicsDevice.Viewport.Width - fishTexture.Width),

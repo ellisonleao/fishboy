@@ -84,7 +84,7 @@ namespace fishboy
             var bbox = new Rectangle((int)this.position.X, (int)this.position.Y, this.texture.Height, this.texture.Width); //peixe rotacionado
             if (playerRect.Intersects(bbox)) 
             {
-                if ((bool) IsolatedStorageSettings.ApplicationSettings["sound"]) 
+                if ((bool) IsolatedStorageSettings.ApplicationSettings["soundFx"]) 
                     hit.Play();
                 this.isCaptured = true;
                 return true;
