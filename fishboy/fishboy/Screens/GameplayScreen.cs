@@ -77,7 +77,7 @@ namespace fishboy
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
-            score = 0;// 600;
+            score =  600;
             lifes = 4;
             fishVel = 0.10f;
         }
@@ -217,13 +217,10 @@ namespace fishboy
 
                 if (level > 6)
                 {
-                    fishVel = 0.10f * (level / (level + 1));
-                    fishQuantity = FibonacciFishes(6);
+                    fishVel = 0.2f;
                 }
-                else
-                {
-                    fishQuantity = FibonacciFishes(level);
-                }
+                fishQuantity = FibonacciFishes(level);
+
                 for (int i = 0; i < fishQuantity; i++)
                 {
                         
@@ -247,9 +244,8 @@ namespace fishboy
         /// </summary>
         public int FibonacciFishes(int level)
         {
-            int[] sequence = new int[] { 1, 1, 2, 3, 5, 8 };
-            int key = level - 1;
-            return sequence[key];
+            int[] sequence = new int[] { 1, 1, 2, 3, 5 };
+            return sequence[level % sequence.Length];
         }
 
         /// <summary>

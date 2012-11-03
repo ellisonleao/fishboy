@@ -36,9 +36,7 @@ namespace fishboy
         Vector2 cloud1Pos;
         Vector2 cloud2Pos;
 
-        Random rand;
-
-        Song music;
+        SpriteFont menuFont;
 
         #endregion
 
@@ -71,14 +69,13 @@ namespace fishboy
             cloud1Texture = content.Load<Texture2D>("cloud1");
             cloud2Texture = content.Load<Texture2D>("cloud2");
             logoTexture = content.Load<Texture2D>("gameover");
+            menuFont = content.Load<SpriteFont>("menufont");
 
             //bubbleTexture = content.Load<Texture2D>("bubblesky");
             //music = content.Load<Song>("menu");
 
             cloud1Pos = new Vector2(400, 100);
             cloud2Pos = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width - 200, 100);
-
-            rand = new Random();
 
             MediaPlayer.Stop();
             //MediaPlayer.Play(music);
@@ -142,8 +139,13 @@ namespace fishboy
             spriteBatch.Draw(cloud2Texture, cloud2Pos, Color.White);
 
 
+            spriteBatch.DrawString(menuFont, "Better luck next time.. :(", 
+                                   new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - 20, 
+                                               ScreenManager.GraphicsDevice.Viewport.Height / 2 + 200), 
+                                   Color.White);
+
             spriteBatch.Draw(logoTexture,
-                new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - 150, ScreenManager.GraphicsDevice.Viewport.Height / 2 - 150), 
+                new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - (logoTexture.Width / 2), ScreenManager.GraphicsDevice.Viewport.Height / 2), 
                 Color.White);
 
             spriteBatch.End();
