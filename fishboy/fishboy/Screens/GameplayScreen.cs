@@ -32,7 +32,8 @@ namespace fishboy
     class GameplayScreen : GameScreen
     {
         #region Fields
-        const int TOTAL_FISHES = 100;
+        const int TOTAL_FISHES = 300;
+        const float MAX_VEL = 0.3f;
         ContentManager content;
         Texture2D fishTexture;
         Texture2D boyTexture;
@@ -56,6 +57,7 @@ namespace fishboy
         int level;
         int fishQuantity;
         float fishVel;
+
         private float[] angles = { MathHelper.ToRadians(90), MathHelper.ToRadians(45), -MathHelper.ToRadians(45) };
 
         Song theme;
@@ -77,9 +79,10 @@ namespace fishboy
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
-            score =  600;
+            score =  0;
             lifes = 4;
             fishVel = 0.10f;
+            
         }
 
 
@@ -217,7 +220,9 @@ namespace fishboy
 
                 if (level > 6)
                 {
-                    fishVel = 0.2f;
+                    fishVel = 0.2f * level/10;
+                    if (fishVel > MAX_VEL)
+                        fishVel = MAX_VEL;
                 }
                 fishQuantity = FibonacciFishes(level);
 
@@ -239,14 +244,24 @@ namespace fishboy
             }
         }
 
+
         /// <summary>
         /// Determine the fish vel by level, using fibonnacci sequence
         /// </summary>
         public int FibonacciFishes(int level)
         {
             int[] sequence = new int[] { 1, 1, 2, 3, 5 };
-            return sequence[level % sequence.Length];
+            if (level > 5)
+                return 5;
+            else
+                return sequence[level % sequence.Length];
+
         }
+
+
+
+
+
 
         /// <summary>
         /// Lets the game respond to player input. Unlike the Update method,
@@ -296,10 +311,6 @@ namespace fishboy
 
             //hiscore
             spriteBatch.DrawString(scoreFont,"HISCORE " + hiscore.ToString(), new Vector2(ScreenManager.GraphicsDevice.Viewport.Width / 2 - 90, 20), Color.Red);
-            
-
-            //DEBUG
-            spriteBatch.DrawString(scoreFont, fishQuantity.ToString(), new Vector2(20, 20), Color.Red);
 
 
             //hearts
@@ -322,10 +333,6 @@ namespace fishboy
             //level
             spriteBatch.DrawString(levelFont, "LEVEL " + level.ToString(), new Vector2( ScreenManager.GraphicsDevice.Viewport.Width- 350, 
                 ScreenManager.GraphicsDevice.Viewport.Height - 60), Color.White);
-
-            spriteBatch.DrawString(scoreFont, gameTime.ElapsedGameTime.Seconds.ToString(),
-                new Vector2(ScreenManager.GraphicsDevice.Viewport.Width, ScreenManager.GraphicsDevice.Viewport.Height - 60),
-                Color.Red);
 
             //boy
             boy.draw(spriteBatch);

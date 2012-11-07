@@ -88,15 +88,23 @@ namespace fishboy
             {
                 IsolatedStorageSettings.ApplicationSettings["sound"] = true;
             }
-            else if ((bool)IsolatedStorageSettings.ApplicationSettings["sound"])
+
+
+            if ((bool)IsolatedStorageSettings.ApplicationSettings["sound"])
             {
                 MediaPlayer.Play(music);
                 MediaPlayer.IsRepeating = true;
             }
-            else if (!(bool)IsolatedStorageSettings.ApplicationSettings["sound"])
+            else 
             {
                 MediaPlayer.Stop();
             }
+
+            if (!IsolatedStorageSettings.ApplicationSettings.Contains("soundFx"))
+            {
+                IsolatedStorageSettings.ApplicationSettings["soundFx"] = true;
+            }
+
         }
 
 

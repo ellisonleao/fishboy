@@ -10,6 +10,8 @@
 #region Using Statements
 using Microsoft.Xna.Framework;
 using System.IO.IsolatedStorage;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Content;
 #endregion
 
 namespace fishboy
@@ -22,11 +24,12 @@ namespace fishboy
     class OptionsMenuScreen : MenuScreen
     {
         #region Fields
-
+        ContentManager content;
         MenuEntry soundMenuEntry;
         MenuEntry soundFxMenuEntry;
         private bool sound = true;
         private bool soundFx = true;
+        Song music;
         
 
         #endregion
@@ -43,7 +46,6 @@ namespace fishboy
             // Create our menu entries.
             soundMenuEntry = new MenuEntry(string.Empty);
             soundFxMenuEntry = new MenuEntry(string.Empty);
-            SetMenuEntryText();
             // Hook up menu event handlers.
             soundMenuEntry.Selected += SoundMenuEntrySelected;
             soundFxMenuEntry.Selected += SoundFxMenuEntrySelected;
@@ -54,6 +56,35 @@ namespace fishboy
             MenuEntries.Add(soundFxMenuEntry);
 
         }
+
+
+                /// <summary>
+        /// Loads graphics content for this screen. The background texture is quite
+        /// big, so we use our own local ContentManager to load it. This allows us
+        /// to unload before going from the menus into the game itself, wheras if we
+        /// used the shared ContentManager provided by the Game class, the content
+        /// would remain loaded forever.
+        /// </summary>
+        public override void LoadContent()
+        {
+            base.LoadContent();
+            if (content == null)
+                content = new ContentManager(ScreenManager.Game.Services, "Content");
+
+            music = content.Load<Song>("menu");
+            SetMenuEntryText();
+
+        }
+
+
+        /// <summary>
+        /// Unloads graphics content for this screen.
+        /// </summary>
+        public override void UnloadContent()
+        {
+            content.Unload();
+        }
+
 
 
         /// <summary>
@@ -73,6 +104,20 @@ namespace fishboy
             soundMenuEntry.Text = "Sound: " + (sound ? "on" : "off");
 
 
+            if (sound)
+            {
+                if (!MediaPlayer.IsRepeating)
+                {
+                    MediaPlayer.Play(music);
+                    MediaPlayer.IsRepeating = true;
+                }
+            }
+            else 
+            {
+                MediaPlayer.Stop();
+                MediaPlayer.IsRepeating = false;
+            }
+
             //effects
             if (IsolatedStorageSettings.ApplicationSettings.Contains("soundFx"))
             {
@@ -83,6 +128,7 @@ namespace fishboy
                 IsolatedStorageSettings.ApplicationSettings["soundFx"] = sound;
             }
             soundFxMenuEntry.Text = "Effects: " + (soundFx ? "on" : "off");
+
             IsolatedStorageSettings.ApplicationSettings.Save();
         }
 
