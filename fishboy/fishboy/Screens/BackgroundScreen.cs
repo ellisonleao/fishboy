@@ -93,7 +93,7 @@ namespace fishboy
 
             rand = new Random();
 
-            if ((bool)IsolatedStorageSettings.ApplicationSettings["isMediaPaused"])
+            if ((bool)IsolatedStorageSettings.ApplicationSettings["playGameSound"])
             {
                 if ((bool)IsolatedStorageSettings.ApplicationSettings["sound"])
                 {

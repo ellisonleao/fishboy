@@ -97,19 +97,21 @@ namespace fishboy
             sound = (bool)IsolatedStorageSettings.ApplicationSettings["sound"];
             soundMenuEntry.Text = "Sound: " + (sound ? "on" : "off");
 
-
-            if (sound)
+            if ((bool)IsolatedStorageSettings.ApplicationSettings["playGameSound"])
             {
-                if (!MediaPlayer.IsRepeating)
+                if (sound)
                 {
-                    MediaPlayer.Play(music);
-                    MediaPlayer.IsRepeating = true;
+                    if (!MediaPlayer.IsRepeating)
+                    {
+                        MediaPlayer.Play(music);
+                        MediaPlayer.IsRepeating = true;
+                    }
                 }
-            }
-            else 
-            {
-                MediaPlayer.Stop();
-                MediaPlayer.IsRepeating = false;
+                else
+                {
+                    MediaPlayer.Stop();
+                    MediaPlayer.IsRepeating = false;
+                }
             }
 
             //effects

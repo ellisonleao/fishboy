@@ -78,15 +78,10 @@ namespace fishboy
             }
         }
 
-        public void IsMediaPlayerBusy()
+        public bool IsMediaPlayerBusy()
         {
             if (MediaPlayer.GameHasControl)
             {
-                /*
-                MessageBoxResult result;
-                result = MessageBox.Show("The media player is currently playing.  Do you wish to stop it and continue?", 
-                                         "Continue", MessageBoxButton.OKCancel);
-                 */
                 IAsyncResult result = Guide.BeginShowMessageBox(
                     "The media player is currently playing.  Do you wish to stop it and continue?",
                     "Please answer YES or NO",
@@ -105,27 +100,27 @@ namespace fishboy
                     if(choice.Value == 0)
                     {
                         MediaPlayer.Stop();
-                        SetIsolatedStorageSettings("isMediaPaused", true);
+                        SetIsolatedStorageSettings("playGameSound", true);
                         SetIsolatedStorageSettings("sound", true);
+                        return true;
                     }
                     else
                     {
-                        SetIsolatedStorageSettings("isMediaPaused", false);
-                        SetIsolatedStorageSettings("sound", false); 
+                        SetIsolatedStorageSettings("playGameSound", false);
+                        SetIsolatedStorageSettings("sound", false);
+                        return false;
                     }
                 }
             }
 
-            SetIsolatedStorageSettings("isMediaPaused", false);
+            SetIsolatedStorageSettings("playGameSound", false);
+            return false;
         }
 
         public static void SetIsolatedStorageSettings(string key, object value)
         {
             IsolatedStorageSettings isolatedStore = IsolatedStorageSettings.ApplicationSettings;
-            if (isolatedStore.Contains(key))
-                isolatedStore[key] = value;
-            else
-                isolatedStore[key] = value;
+            isolatedStore[key] = value;
             isolatedStore.Save();
         }
 
