@@ -26,7 +26,6 @@ namespace fishboy
     {
         #region Fields
         ContentManager content;
-        private string creditsText = "Fuschia \n Game \n Studios";
         MenuEntry creditsMenuEntry;
         Texture2D helpScreen;
         #endregion

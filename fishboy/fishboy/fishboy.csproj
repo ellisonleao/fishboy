@@ -26,7 +26,7 @@
     <SupportedCultures>
     </SupportedCultures>
     <ApplicationIcon>Game.ico</ApplicationIcon>
-    <Thumbnail>largelogo.png</Thumbnail>
+    <Thumbnail>logosmall.png</Thumbnail>
     <GameStartupType>fishboy.GameStateManagementGame</GameStartupType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Windows Phone' ">
@@ -97,6 +97,7 @@
   <ItemGroup>
     <Content Include="Game.ico" />
     <Content Include="largelogo.png" />
+    <Content Include="logosmall.png" />
     <Content Include="PhoneGameThumb.png">
       <XnaPlatformSpecific>true</XnaPlatformSpecific>
     </Content>

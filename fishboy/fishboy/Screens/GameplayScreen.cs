@@ -117,31 +117,17 @@ namespace fishboy
             cloud2Pos = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width - 200, 100);
 
 
-            
-            if (IsolatedStorageSettings.ApplicationSettings.Contains("sound"))
+
+            if ((bool)IsolatedStorageSettings.ApplicationSettings["isMediaPaused"])
             {
-                var sound = IsolatedStorageSettings.ApplicationSettings["sound"];
-                if ((bool)sound)
+                if ((bool)IsolatedStorageSettings.ApplicationSettings["sound"])
                 {
                     MediaPlayer.Play(theme);
                     MediaPlayer.IsRepeating = true;
                 }
-                else
-                {
-                    MediaPlayer.Stop();
-                }
-
             }
 
-
-            if (IsolatedStorageSettings.ApplicationSettings.Contains("hiscore"))
-            {
-                hiscore = (int)IsolatedStorageSettings.ApplicationSettings["hiscore"];
-            }
-            else 
-            {
-                hiscore = score;
-            }
+            hiscore = (int)IsolatedStorageSettings.ApplicationSettings["hiscore"];
             CreateFishes();
 
             // once the load has finished, we use ResetElapsedTime to tell the game's

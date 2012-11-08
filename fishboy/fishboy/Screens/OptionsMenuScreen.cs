@@ -27,8 +27,8 @@ namespace fishboy
         ContentManager content;
         MenuEntry soundMenuEntry;
         MenuEntry soundFxMenuEntry;
-        private bool sound = true;
-        private bool soundFx = true;
+        private bool sound;
+        private bool soundFx;
         Song music;
         
 
@@ -93,14 +93,8 @@ namespace fishboy
         void SetMenuEntryText()
         {
             //music
-            if (IsolatedStorageSettings.ApplicationSettings.Contains("sound"))
-            {
-                sound = (bool)IsolatedStorageSettings.ApplicationSettings["sound"];
-            }
-            else 
-            {
-                IsolatedStorageSettings.ApplicationSettings["sound"] = sound;
-            }
+
+            sound = (bool)IsolatedStorageSettings.ApplicationSettings["sound"];
             soundMenuEntry.Text = "Sound: " + (sound ? "on" : "off");
 
 
@@ -119,14 +113,7 @@ namespace fishboy
             }
 
             //effects
-            if (IsolatedStorageSettings.ApplicationSettings.Contains("soundFx"))
-            {
-                soundFx = (bool)IsolatedStorageSettings.ApplicationSettings["soundFx"];
-            }
-            else
-            {
-                IsolatedStorageSettings.ApplicationSettings["soundFx"] = sound;
-            }
+            soundFx = (bool)IsolatedStorageSettings.ApplicationSettings["soundFx"];
             soundFxMenuEntry.Text = "Effects: " + (soundFx ? "on" : "off");
 
             IsolatedStorageSettings.ApplicationSettings.Save();

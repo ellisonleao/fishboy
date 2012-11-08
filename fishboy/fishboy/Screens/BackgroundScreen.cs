@@ -56,6 +56,15 @@ namespace fishboy
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
         }
 
+        public static void SetIsolatedStorageSettings(string key, object value)
+        {
+            IsolatedStorageSettings isolatedStore = IsolatedStorageSettings.ApplicationSettings;
+            if (isolatedStore.Contains(key))
+                isolatedStore[key] = value;
+            else
+                isolatedStore[key] = value;
+            isolatedStore.Save();
+        }
         
         /// <summary>
         /// Loads graphics content for this screen. The background texture is quite
@@ -84,25 +93,13 @@ namespace fishboy
 
             rand = new Random();
 
-            if (!IsolatedStorageSettings.ApplicationSettings.Contains("sound"))
+            if ((bool)IsolatedStorageSettings.ApplicationSettings["isMediaPaused"])
             {
-                IsolatedStorageSettings.ApplicationSettings["sound"] = true;
-            }
-
-
-            if ((bool)IsolatedStorageSettings.ApplicationSettings["sound"])
-            {
-                MediaPlayer.Play(music);
-                MediaPlayer.IsRepeating = true;
-            }
-            else 
-            {
-                MediaPlayer.Stop();
-            }
-
-            if (!IsolatedStorageSettings.ApplicationSettings.Contains("soundFx"))
-            {
-                IsolatedStorageSettings.ApplicationSettings["soundFx"] = true;
+                if ((bool)IsolatedStorageSettings.ApplicationSettings["sound"])
+                {
+                    MediaPlayer.Play(music);
+                    MediaPlayer.IsRepeating = true;
+                }
             }
 
         }

@@ -10,6 +10,11 @@
 #region Using Statements
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Windows;
+using Microsoft.Xna.Framework.Media;
+using System.IO.IsolatedStorage;
+using Microsoft.Xna.Framework.GamerServices;
+using System;
 #endregion
 
 namespace fishboy
@@ -55,11 +60,76 @@ namespace fishboy
             // fails, we add our default screens.
             if (!screenManager.DeserializeState())
             {
+                //verifica som externo tocando
+                IsMediaPlayerBusy();
+
+                if (!IsolatedStorageSettings.ApplicationSettings.Contains("soundFx"))
+                {
+                    SetIsolatedStorageSettings("soundFx", true);
+                }
+
+                if (!IsolatedStorageSettings.ApplicationSettings.Contains("hiscore"))
+                {
+                    SetIsolatedStorageSettings("hiscore", 0);
+                }
                 // Activate the first screens.
                 screenManager.AddScreen(new BackgroundScreen(), null);
                 screenManager.AddScreen(new MainMenuScreen(), null);
             }
         }
+
+        public void IsMediaPlayerBusy()
+        {
+            if (MediaPlayer.GameHasControl)
+            {
+                /*
+                MessageBoxResult result;
+                result = MessageBox.Show("The media player is currently playing.  Do you wish to stop it and continue?", 
+                                         "Continue", MessageBoxButton.OKCancel);
+                 */
+                IAsyncResult result = Guide.BeginShowMessageBox(
+                    "The media player is currently playing.  Do you wish to stop it and continue?",
+                    "teste",
+                    new string[] { "OK", "NO!" },
+                    0,
+                    MessageBoxIcon.None,
+                    null,
+                    null
+                );
+
+                result.AsyncWaitHandle.WaitOne();
+
+                int? choice = Guide.EndShowMessageBox(result);
+                if (choice.HasValue)
+                {
+                    if(choice.Value == 0)
+                    {
+                        MediaPlayer.Stop();
+                        SetIsolatedStorageSettings("isMediaPaused", true);
+                        SetIsolatedStorageSettings("sound", true);
+                    }
+                    else
+                    {
+                        SetIsolatedStorageSettings("isMediaPaused", false);
+                        SetIsolatedStorageSettings("sound", false); 
+                    }
+                }
+            }
+
+            SetIsolatedStorageSettings("isMediaPaused", false);
+        }
+
+        public static void SetIsolatedStorageSettings(string key, object value)
+        {
+            IsolatedStorageSettings isolatedStore = IsolatedStorageSettings.ApplicationSettings;
+            if (isolatedStore.Contains(key))
+                isolatedStore[key] = value;
+            else
+                isolatedStore[key] = value;
+            isolatedStore.Save();
+        }
+
+
 
         protected override void OnExiting(object sender, System.EventArgs args)
         {
