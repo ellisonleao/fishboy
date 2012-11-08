@@ -89,8 +89,8 @@ namespace fishboy
                  */
                 IAsyncResult result = Guide.BeginShowMessageBox(
                     "The media player is currently playing.  Do you wish to stop it and continue?",
-                    "teste",
-                    new string[] { "OK", "NO!" },
+                    "Please answer YES or NO",
+                    new string[] { "YES", "NO" },
                     0,
                     MessageBoxIcon.None,
                     null,
